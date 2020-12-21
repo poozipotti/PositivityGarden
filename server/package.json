@@ -1,0 +1,10 @@
+{
+  "name": "SentimentGardenApi",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "George Beckert",
+  "license": "MIT",
+  "dependencies": {
+    "koa": "^2.13.0"
+  }
+}
