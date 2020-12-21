@@ -5,6 +5,14 @@
   "author": "George Beckert",
   "license": "MIT",
   "dependencies": {
+    "@google-cloud/language": "^4.2.1",
     "koa": "^2.13.0"
+  },
+  "scripts": {
+    "start": "node index.js",
+    "start:dev": "nodemon index.js"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.6"
   }
 }
