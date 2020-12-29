@@ -1,8 +1,5 @@
 function initializeFlowers(amountOfFlowers = 10) {
-  const aTextFlower = textFlower(
-    { x: 500, y: 700 },
-    "lsadkjlakfdsjfdslkj sdalkfjdsalkjfdasl dsfalkjaslkj a a "
-  );
+  const aTextFlower = randomFlower()
   const flowers = new Array(amountOfFlowers)
     .fill(null)
     .map((_,i) => ({ ...aTextFlower,x: (i+1)*200 }));
@@ -61,4 +58,4 @@ function updateFlowers(flowers) {
     flower.y >= flowerCanvas.height / 2 ? flower : randomFlower()
   );
 }
-export { initializeFlowers, updateFlowers };
+export { initializeFlowers, updateFlowers, textFlower };

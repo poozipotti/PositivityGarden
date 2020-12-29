@@ -1,1 +1,1 @@
-export GOOGLE_APPLICATION_CREDENTIALS="/home/george/Projects/SentimentGarden/server/sentimentGardenSecrets.js"
+export GOOGLE_APPLICATION_CREDENTIALS="sentimentGardenSecrets.json"

@@ -1,4 +1,5 @@
 import { Drawer, Canvas } from "./Canvas.js";
+import { textFlower } from "./Flower.js"
 
 class FlowerCanvas {
   canvas = null;
@@ -18,6 +19,15 @@ class FlowerCanvas {
       myContext.canvas.height = tempWidth;
     };
   }
+
+  addTextFlower(text) {
+    this.flowers = [...this.flowers, textFlower({ x: 500, y: 500 }, text)];
+    this.update();
+  }
+  clearFlowers() {    
+    this.flowers = [];
+  }
+
   update() {
     this.canvas.update(FlowerDrawer(this.flowers));
   }
@@ -56,7 +66,7 @@ function drawFlower({ flower, canvasContext }) {
   const { x, y, width, height, curveWeight, number, color } = flower;
   let TO_RADIANS = Math.PI / 180;
 
-  //stem 
+  //stem
   canvasContext.translate(x, y);
   canvasContext.fillStyle = "#42f495";
   canvasContext.fillRect(-2.5, 0, 5, flowerCanvas.height - y);

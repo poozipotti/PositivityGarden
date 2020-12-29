@@ -1,30 +1,29 @@
-const Koa = require('koa');
+const Koa = require("koa");
+const Router = require("@koa/router");
+const language = require("@google-cloud/language");
+const cors = require('@koa/cors')
+
 const app = new Koa();
-const language = require('@google-cloud/language');
+const router =  new Router();
 
-async function quickstart(textToAnalyze) {
-  // Imports the Google Cloud client library
 
-  // Instantiates a client
+async function analyzeText(ctx) {
+  const { text } = ctx.request.query;
+
   const client = new language.LanguageServiceClient();
 
-
   const document = {
-    content: textToAnalyze,
-    type: 'PLAIN_TEXT',
+    content: text,
+    type: "PLAIN_TEXT",
   };
 
   // Detects the sentiment of the text
-  const [result] = await client.analyzeSentiment({document: document});
-  return result;
-
+  const [result] = await client.analyzeSentiment({ document: document });
+  ctx.body = result;
 }
 
-app.use( async (ctx) => {
-  const text = "Hello george you look very nice"
-  const result = await quickstart(text);
-
-  ctx.body = {result, text};
-});
+app.use(cors({origin:'*'}));
+router.get("/sentimentAnlysis", analyzeText);
+app.use(router.routes());
 
 app.listen(3000);
