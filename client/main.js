@@ -1,17 +1,23 @@
 import { FlowerCanvas } from "./modules/FlowerCanvas.js";
-import { initializeFlowers } from "./modules/Flower.js";
 import { analyzeText } from "./modules/Analysis.js";
+import { TextFlower } from "./modules/Flower.js";
 
 window.onload = function () {
   const flowerCanvas = new FlowerCanvas({
     canvasId: "flowerCanvas",
     canvasContainerId: "flowerCanvas",
+    flower: TextFlower,
+    flowerOptions: {
+      text: "i am a very kind happy message",
+      sentiment: { score: 0, magnitude: 0 },
+      x: 500,
+      y: 500,
+    },
+    amountOfFlowers: 1,
   });
-  flowerCanvas.flowers = initializeFlowers(0);
-  flowerCanvas.update();
-  registerTextForm("message-form", "message-input", (text) => {
+  registerTextForm("message-form", "message-input", ({ text, sentiment }) => {
     flowerCanvas.clearFlowers();
-    flowerCanvas.addTextFlower(text);
+    flowerCanvas.addTextFlower({ text, sentiment });
   });
 };
 
@@ -20,7 +26,11 @@ function registerTextForm(formId, inputId, fn) {
   const input = document.getElementById(inputId);
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
-    const textAnalysis = await analyzeText(input.value);
-    fn(input.value);
+    const { documentSentiment } = await analyzeText(input.value);
+    document.getElementById(
+      "sentiment-display"
+    ).innerHTML = `score:${documentSentiment.score} magnitude:${documentSentiment.magnitude}`;
+
+    fn({ text: input.value, sentiment: documentSentiment });
   });
 }

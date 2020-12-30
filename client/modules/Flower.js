@@ -1,28 +1,43 @@
-function initializeFlowers(amountOfFlowers = 10) {
-  const aTextFlower = randomFlower()
-  const flowers = new Array(amountOfFlowers)
-    .fill(null)
-    .map((_,i) => ({ ...aTextFlower,x: (i+1)*200 }));
-
-  /*setInterval(function () {
-    updateCanvas();
-  }, 100);
-  */
-  return flowers;
+class Flowers {
+  flowers = [];
+  constructor(flower, options, amountOfFlowers = 10) {
+    let flowers = [];
+    if (flower) {
+      flowers = new Array(amountOfFlowers)
+        .fill(null)
+        .map(() => flower(options || {}));
+    }
+    this.flowers = flowers;
+  }
+  addFlower(flower, options) {
+    this.flowers = [...this.flowers, flower(options)];
+  }
+  clear() {
+    this.flowers = [];
+  }
 }
 
-function textFlower({ x, y }, textToConvert) {
-  const longerWords = textToConvert
-    .split(" ")
-    .filter((word) => word.length >= 5).length + 1;
-  const shorterWords = textToConvert
-    .split(" ")
-    .filter((word) => word.length < 5).length + 1; 
-  const petals = Math.floor(textToConvert.length / 4);
-  const curveWeight = 1.5
-  let randomColor = "#000000".replace(/0/g, () =>
-    (~~(Math.random() * 16)).toString(16)
-  );
+function TextFlower({ x, y, text, sentiment }) {
+  const { score, magnitude } = sentiment;
+  const longerWords =
+    text.split(" ").filter((word) => word.length >= 5).length + 1;
+  const shorterWords =
+    text.split(" ").filter((word) => word.length < 5).length + 1;
+  const petals = Math.floor(text.length / 4);
+  const curveWeight = 1.5;
+  //hue will be from 0 to 2 and then converted to hue
+  // hue range 1-155
+  const hue = (1 + score) / 4;
+  const saturation = 1;
+  //magnitude is not normailized!!
+  const lightness = 1;
+
+  let colorArr = hslToRgb(hue, saturation, lightness);
+  const colorString = colorArr.map((colVal) => {
+    let colorVal = Math.floor(colVal).toString(16);
+    return colorVal.length === 2 ? colorVal: `0${colorVal}`;
+  }).join("");
+  const color = `#${colorString}`;
 
   return {
     x,
@@ -32,17 +47,17 @@ function textFlower({ x, y }, textToConvert) {
     height: shorterWords * 30, //shorter words
     number: Math.floor(petals), //number
     growRate: Math.random() * 0.5 + 0.5, //grow rate
-    color: randomColor + "AA", //color
+    color: color, //color
   };
 }
 
-function randomFlower() {
+function RandomFlower({ x, y }) {
   let randomColor = "#000000".replace(/0/g, () =>
     (~~(Math.random() * 16)).toString(16)
   );
   return {
-    x: Math.random() * flowerCanvas.width, //x
-    y: flowerCanvas.height - flowerCanvas.height * 0.1, //y
+    x,
+    y,
     width: Math.random() * 30 + (500 / flowerCanvas.width) * 10, //width
     height: Math.random() * 30 + (500 / flowerCanvas.height) * 10, //height
     curveWeight: Math.random() * 2, //curve weight
@@ -52,10 +67,30 @@ function randomFlower() {
   };
 }
 
-function updateFlowers(flowers) {
-  //update flowers
-  return flowers.map((flower) =>
-    flower.y >= flowerCanvas.height / 2 ? flower : randomFlower()
-  );
+function hslToRgb(h, s, l) {
+  var r, g, b;
+
+  if (s == 0) {
+    r = g = b = l; // achromatic
+  } else {
+    function hue2rgb(p, q, t) {
+      if (t < 0) t += 1;
+      if (t > 1) t -= 1;
+      if (t < 1 / 6) return p + (q - p) * 6 * t;
+      if (t < 1 / 2) return q;
+      if (t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6;
+      return p;
+    }
+
+    var q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+    var p = 2 * l - q;
+
+    r = hue2rgb(p, q, h + 1 / 3);
+    g = hue2rgb(p, q, h);
+    b = hue2rgb(p, q, h - 1 / 3);
+  }
+
+  return [r * 255, g * 255, b * 255];
 }
-export { initializeFlowers, updateFlowers, textFlower };
+
+export { Flowers, TextFlower, RandomFlower };

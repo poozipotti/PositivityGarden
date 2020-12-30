@@ -1,14 +1,20 @@
 import { Drawer, Canvas } from "./Canvas.js";
-import { textFlower } from "./Flower.js"
+import { Flowers, TextFlower } from "./Flower.js";
 
 class FlowerCanvas {
   canvas = null;
-  flowers = [];
-  constructor({ canvasId, canvasContainerId }) {
+  flowers = null;
+  constructor({
+    canvasId,
+    canvasContainerId,
+    flower,
+    flowerOptions,
+    amountOfFlowers,
+  }) {
     let flowerCanvas = document.getElementById(canvasId);
     let flowerCanvasContainer = document.getElementById(canvasContainerId);
     let myContext = flowerCanvas.getContext("2d");
-
+    this.flowers = new Flowers(flower, flowerOptions, amountOfFlowers);
     const tempWidth = flowerCanvasContainer.clientWidth;
     myContext.canvas.width = tempWidth;
     myContext.canvas.height = tempWidth + 4;
@@ -18,18 +24,20 @@ class FlowerCanvas {
       myContext.canvas.width = tempWidth;
       myContext.canvas.height = tempWidth;
     };
-  }
-
-  addTextFlower(text) {
-    this.flowers = [...this.flowers, textFlower({ x: 500, y: 500 }, text)];
     this.update();
-  }
-  clearFlowers() {    
-    this.flowers = [];
   }
 
   update() {
-    this.canvas.update(FlowerDrawer(this.flowers));
+    this.canvas.update(FlowerDrawer(this.flowers.flowers));
+  }
+
+  addTextFlower(options) {
+    this.flowers.addFlower(TextFlower, { x: 500, y: 500, ...options });
+    this.update();
+  }
+  clearFlowers() {
+    this.flowers.clear();
+    this.update();
   }
 }
 
